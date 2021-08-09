@@ -7,7 +7,7 @@
 - Server Master lữu trử phiên bản Database chính, Server Slave lưu trữ phiên bản Database được nhân bản từ Master. Quá trình nhân bản từ Master -> Slave được gọi là Replication.
 - Dưới đây là ví dụ mô hình hoạt động :
 
- <img src="https://github.com/tulha161/redis/blob/main/pic/1.png">
+ <img src="https://github.com/tulha161/sql/blob/main/pic/1.png">
 
 ## 2. Cách thức hoạt động : 
 
@@ -20,7 +20,7 @@
 - Sau khi `Dumb_Thread` gửi binlog tới `I/O_Thread`, `I/O_Thread` sẽ có nhiệm vụ đọc binlog này và ghi vào relaylog
 - Đồng thời trên Slave sẽ mở một `SQL_Thread`, nó có nhiệm vụ đọc các event từ relaylog và apply các thay đổi đso vào Database trên slave -> Hoàn thành quá trình Replication.
 
- <img src="https://github.com/tulha161/redis/blob/main/pic/2.png">
+ <img src="https://github.com/tulha161/sql/blob/main/pic/2.png">
 
 ## 3. Cấu hình MySQL Replication 
 
@@ -122,7 +122,7 @@ START SLAVE;
 SHOW SLAVE STATUS\G;
 ```
 - Đã thiết lập thành công : 
- <img src="https://github.com/tulha161/redis/blob/main/pic/5.png">
+ <img src="https://github.com/tulha161/sql/blob/main/pic/5.png">
 
 
 

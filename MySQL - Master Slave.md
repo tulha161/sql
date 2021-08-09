@@ -112,7 +112,7 @@ sudo mysql db < /tmp/db.sql
 mysql
 
 CHANGE MASTER TO MASTER_HOST='10.0.20.4',
-MASTER_USER='user', 
+MASTER_USER='replica', 
 MASTER_PASSWORD='p@ssPASS1', 
 MASTER_LOG_FILE='mysql-bin.000001', 
 MASTER_LOG_POS=1027;

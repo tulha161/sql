@@ -1,7 +1,5 @@
 # MySQL - Master Slave
 
-## Overall : Xây dựng mô hình MYSQL Replication Master - Slave và các kịch bản hệ thống die node, backup , ... 
-
 ## 1. MySQL Replication là gì ?
 - MySQL Replication là một quá trình cho phép duy trì nhiều bản sao của Database bằng cách replica chúng dưới mô hình master - slave. Việc này giúp hệ thống giữ được sự toàn về về mặt database, có khả năng backup khi gặp sự cố cũng như tối ưu hiệu năng nhờ việc isolate việc ghi và cập nhật data trên master - đọc trên các slave. 
 - Server Master lữu trử phiên bản Database chính, Server Slave lưu trữ phiên bản Database được nhân bản từ Master. Quá trình nhân bản từ Master -> Slave được gọi là Replication.
@@ -123,6 +121,50 @@ SHOW SLAVE STATUS\G;
 ```
 - Đã thiết lập thành công : 
  <img src="https://github.com/tulha161/sql/blob/main/pic/5.png">
+ 
+### Test replication 
+
+- Quay sang master, lập một bảng mới **tb2**, insert dữ vào bảng cũ **tb1** : 
+```
+mysql
+CREATE TABLE tb2 (
+example_column varchar(30)
+);
+
+insert into tb1 values 
+ ('Hello'),
+ ('How are you'),
+  ('I am Fine');
+```
+- Sang slave, kiểm tra xem data thay đổi đã được đồng bộ sang chưa : 
+
+```
+mysql> use db;
+Database changed
+mysql> show tables;
++--------------+
+| Tables_in_db |
++--------------+
+| tb1          |
+| tb2          |
++--------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM tb1;
++----------------+
+| example_column |
++----------------+
+| Hello          |
+| How are you    |
+| I am Fine      |
++----------------+
+3 rows in set (0.00 sec)
+
+mysql> exit;
+```
+- Như vậy, có thể thấy data đã được đồng bộ ngay, quá trình replication đã ổn. 
+
+
 
 
 

@@ -164,7 +164,19 @@ mysql> exit;
 ```
 - Như vậy, có thể thấy data đã được đồng bộ ngay, quá trình replication đã ổn. 
 
-
+## 4. Failover và cách khắc phục :
+- Với giải pháp Replication Master - Slave, các node được phân chia nhiệm vụ rõ ràng, node master đóng vai trò ghi, cập nhật dữ liệu mới, node slave đóng vai trò tạo ra bản sau của các dữ liệu đó, có thể được cấu hình làm source truy xuất dữ liệu từ client. Vì vậy khi failover xảy ra ( master hoặc slave chết ), các node có vai trò khác nhau nên sẽ không có tính backup trực tiếp cho nhau như hệ thống HA - master - master . Vì vậy khi node chết thì hầu như sẽ có downtime và việc xử lí cấu hình thủ công cũng không tránh khỏi. 
+### 4.1. Trường hợp node Slave die : 
+- Với trường hợp này, ta cần có node Slave mới thay thế cho node Slave đã chết. Cấu hình lại node Slave mới ngay khi có sự cố, các bước cấu hình như ở trên. 
+- Khuyến nghị nên có ít nhất 2 node Slave để khi 1 node chết quá trình replication vẫn được đảm bảo.
+### 4.2 Trường hợp node Master die : 
+- Trường hợp này sẽ phức tạp hơn do phải promote một node Slave lên làm Master thay thế, quá trình này được thực hiện thủ công.
+- Sẽ có downtime hệ thống, nhưng do Slave vẫn duy trì nên sẽ hạn chế được downtime tối thiểu.
+- Cụ thể, với mô hình 1 master ( db1 ) và 2 slave ( db2 và db 3 ) :
+	- cấu hình `--log-slave-updates=OFF` ở các slave, điều này sẽ skip việc ghi binlog tại Slave đối với các hành vi đồng bộ dữ liệu với Master.
+	- Khi db1 die, chọn db2 trở thành Master mới, sau đó cấu hình tại db3 replicate db2. Tuy nhiên như ở trên ta sẽ cần chỉ định file binlog và position của file log, và do db2 sau khi đc đổi thành master thì mới bắt đầu sinh ra binlog, nên trên db3 ta chỉ cần trỏ về file binlog và position đầu tiên của db2 là đủ. => chuyện này đảm bảo rằng db3 sẽ đồng bộ dữ liệu với db2.
+	- Cập nhật lại phía client địa chỉ của master mới.
+- Tham khảo thêm tại source : https://dev.mysql.com/doc/refman/8.0/en/replication-solutions-switch.html
 
 
 

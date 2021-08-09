@@ -75,7 +75,7 @@ binlog_do_db		= db 	    #define tên db muốn replicate, ở đây mình đặt
 
 ```
 
-### Test Replication 
+### Tạo Replication
 ### Trên Master:
 - Nguyên tắc khi tạo replication là phải LOCK tất cả các table trên Master DB, để dữ liệu không thay đổi, sau đó xác định binlog và position, 2 thông số dùng để cấu hình trên Slave xác định đoạn dữ liệu bắt đầu đồng bộ.
 - Trên DB Master : 
@@ -95,7 +95,7 @@ SHOW MASTER STATUS;
 	- Position : 1027
 - Sau đó ta sẽ dump dữ liệu từ master DB và đẩy qua Slave DB ( sau khi dump thì `UNLOCK tables;` trở lại tại master ) 
 ```
-mysqldump -u root db > .sql
+mysqldump -u root db > db.sql
 scp db.sql ubuntu@10.0.20.5:/tmp/
 ```
 

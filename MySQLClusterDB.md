@@ -102,7 +102,6 @@ exit;
 p
 - Có thể test kết nối từ xa đến các remote db với cmd : 
 `mysql -u [user] -p -h [remoteip] -P 3306`
-`mysql -u replica -p -h 10.0.20.15 -P 3306
 p@sstoWord
 ### 2.4. Config Replication
 - Ở step này, ta sẽ cấu hình như sau : 
@@ -225,8 +224,8 @@ mysql> select user, Host FROM mysql.user;
 +------------------+-----------+
 | haproxy_check    | %         |
 | haproxy_root     | %         |
-| replica          | 10.0.20.4 |
-| replica          | 10.0.20.5 |
+| replica          | 10.0.20.14|
+| replica          | 10.0.20.15|
 | debian-sys-maint | localhost |
 | mysql.infoschema | localhost |
 | mysql.session    | localhost |
@@ -365,6 +364,20 @@ db4 10.0.20.20
 - Tương tự, trong trường hợp db5 cũng chết, lúc này db6 sẽ đứng lên nhận nhiệm vụ là master node duy nhất gánh vác hoạt động của toàn cụm. Không nên để trường hợp này xảy ra :D 
 
 
+## 4. Backup and Restore: 
+- Mô hình cluster node với HA như ở trên đã phục vụ được mục đích backup lẫn nhau giữa các server trong cụm mà không phải thay đổi cứng bằng tay như Master - Slave. Tuy nhiên, giả định trường hợp toàn bộ node trong cụm vì lý do nào đó đều chết, khi đó ta sẽ phải thực hiện khôi phục lại bằng data đã được sao lưu lại từ trước, từ đó có thể phần nào khôi phục nhanh nhất hoạt động của cụm, giảm downtime xuống tối thiểu.
+- Thao tác backup bằng mysqldump : `mysqldump -u [user] -p [database_name] > [file]`
+	- Trong trường hợp backup toàn bộ DB dưới user root. ta có thể sử dụng : `mysqldump -u root -p --all-databases > /backup/mysql/alldatabase.sql`
+- Thao tác để restore lại data khi đã có backup file: `mysql --one-database database_name < alldatabases.sql`
+- Phần cốt lỗi của DB ta Databases, vì vậy việc backup databases là rất quan trọng, quản trị viên thực hiện nó
+hàng ngày, thậm chí hàng giờ với những db tuyệt đối quan trọng. 
+
+## 5. Monitoring với Icinga2 : 
+- Cài đặt check command `check_mysql_health` trên server icinga2
+- Tạo user `monitor` trên cụm 
+- Setup theo bài tham khảo : https://icinga.com/blog/2017/06/12/how-to-monitor-your-mysql-servers-with-icinga-2
+
+<img src="https://github.com/tulha161/sql/blob/main/pic/2.9.png">
 
 
 
